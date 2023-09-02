@@ -13,9 +13,9 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.Properties;
 
-public class ConsumerDemoWithShutdown {
+public class ConsumerDemoCooperative {
 
-    private static final Logger log = LoggerFactory.getLogger(ConsumerDemoWithShutdown.class.getSimpleName());
+    private static final Logger log = LoggerFactory.getLogger(ConsumerDemoCooperative.class.getSimpleName());
 
     public static void main(String[] args) {
         String groupId = "my-java-application";
@@ -33,7 +33,8 @@ public class ConsumerDemoWithShutdown {
         properties.setProperty("value.deserializer", StringDeserializer.class.getName());
         properties.setProperty("group.id", groupId);
         properties.setProperty("auto.offset.reset", "earliest");
-
+        // 점진적, 협력적 리밸런싱 설정하기,
+        properties.setProperty("partition.assignment.strategy", CooperativeStickyAssignor.class.getName());
         // create a consumer - 컨슈머 생성
         KafkaConsumer<String, String> consumer = new KafkaConsumer<>(properties);
 
