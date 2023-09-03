@@ -1,6 +1,7 @@
 package org.kafka.demos;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
@@ -17,7 +18,7 @@ public class ProducerDemo {
 
         // create Producer Properties - 프로듀서 설정 생성
         Properties properties = new Properties();
-        properties.setProperty("bootstrap.servers", "127.0.0.1:9092"); // 브로커와 연결
+        properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,"127.0.0.1:9092"); // 브로커와 연결
 
         /*
          set producer properties
@@ -26,8 +27,8 @@ public class ProducerDemo {
            Producer로 문자열이 들어오면 그 문자열은 Kafka 클라이언트가 제공하는 StringSerializer 클래스를 사용해서
            직렬화 하겠다는 의미다.
          */
-        properties.setProperty("key.serializer", StringSerializer.class.getName());
-        properties.setProperty("value.serializer", StringSerializer.class.getName());
+        properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,StringSerializer.class.getName());
+        properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 
 
         // create Producer Properties - 만일 외부 보안 연결이 필요하다면? 아래와 같이 필요 설정에 따라 작성

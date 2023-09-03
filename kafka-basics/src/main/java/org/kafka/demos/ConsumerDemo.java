@@ -3,6 +3,7 @@ package org.kafka.demos;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +24,7 @@ public class ConsumerDemo {
 
         // create Producer Properties - 프로듀서 설정 생성
         Properties properties = new Properties();
-        properties.setProperty("bootstrap.servers", "127.0.0.1:9092"); // 브로커와 연결
+        properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,"127.0.0.1:9092"); // 브로커와 연결
 
 
         // create consumer configs - 역직렬화
