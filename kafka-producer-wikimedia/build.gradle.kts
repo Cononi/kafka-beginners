@@ -10,12 +10,12 @@ repositories {
 }
 
 dependencies {
-
     // OKhttp
-    implementation("com.squareup.okhttp3:okhttp:4.11.0")
+    implementation("com.squareup.okhttp3:okhttp:4.9.3")
 
     // OKhttp - eventsource
-    implementation("com.launchdarkly:okhttp-eventsource:4.1.1")
+    implementation("com.launchdarkly:okhttp-eventsource:2.5.0")
+
 
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
