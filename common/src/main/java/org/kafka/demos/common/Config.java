@@ -18,6 +18,11 @@ public class Config {
         properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,StringSerializer.class.getName());
         properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 
+        // 처리량을 늘리기 위한 프로듀서 구성
+        properties.setProperty(ProducerConfig.LINGER_MS_CONFIG, "20");
+        properties.setProperty(ProducerConfig.BATCH_SIZE_CONFIG, Integer.toString(32 * 1024));
+        properties.setProperty(ProducerConfig.COMPRESSION_TYPE_CONFIG, "snappy");
+
         // 2.8 이전일 떄
 //        properties.setProperty(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG,"true");
 //        properties.setProperty(ProducerConfig.ACKS_CONFIG, "all");

@@ -24,7 +24,6 @@ public class WikimediaChangesProducer {
 
         String topic = "wikimedia.recentchange";
 
-        log.info(properties.toString());
         /**
          * OKhttp 방식
          */
