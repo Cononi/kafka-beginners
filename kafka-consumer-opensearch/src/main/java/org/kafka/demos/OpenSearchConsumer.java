@@ -11,6 +11,7 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.errors.WakeupException;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.opensearch.action.bulk.BulkRequest;
 import org.opensearch.action.bulk.BulkResponse;
@@ -44,6 +45,29 @@ public class OpenSearchConsumer {
 
         // Kafka Client Creat
         KafkaConsumer<String, String> consumer = createKafkaConsumer();
+
+        // get a reference to ther main thread - 메인 스레드, 즉 현재 스레드의 참조를 얻는다.
+        final Thread mainThread = Thread.currentThread();
+
+        // adding the Shutdown Hook
+        // 새로운 쓰레드를 생성해서 로직 실행.
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
+                // 종료를 감지함, cunsumer.wakeup 호출 후 종료하겠다.
+                log.info("Detected a shutdown, let's exit by calling consumer.wakeup()...");
+                consumer.wakeup();
+
+                // join the main thread to allow the execution of the code in the main thread
+                // 메인 스레드에 합류후 메인 스레드의 코드 실행을 허용
+                try {
+                    // 특정한 쓰레드가 종료될 때 까지 기다린다. (여기서는 현재 이 쓰레드로 지정된 상태)
+                    mainThread.join();
+                    log.info("쓰레드가 모두 종료되었습니다.");
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         // OpenSearch Query and index create
         try(openSearchClient; consumer) {
@@ -126,6 +150,19 @@ public class OpenSearchConsumer {
                 }
 
             }
+        }  catch (WakeupException e) {
+            // 컨슈머가 종료를 시작
+            log.info("Consumer is starting to shut down");
+        } catch (Exception e) {
+            // 컨슈머에 예기치 못한 예외 발생
+            log.error("Unexpected exception in ther consumer", e);
+        } finally {
+            // close the consumer, this will also commit offsets
+            consumer.close();
+            // openSearch 종료
+            openSearchClient.close();
+            // 컨슈머가 우아하게 종료
+            log.info("The consumer is now gracefully shut down");
         }
     }
 
